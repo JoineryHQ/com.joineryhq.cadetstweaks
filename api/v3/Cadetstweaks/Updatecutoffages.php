@@ -39,7 +39,7 @@ function civicrm_api3_cadetstweaks_Updatecutoffages($params) {
   // Update cutoff age of every contact using the custom group value table and column
   $query = "UPDATE {$getCadetsExtra['table_name']} AS cadets
     INNER JOIN civicrm_contact AS cont ON cadets.entity_id = cont.id
-    SET cadets.{$getAgeCutOffField['column_name']} = IF(DATE_FORMAT(NOW(), '03-31') < DATE_FORMAT(NOW(), '%m-%d'), DATE_FORMAT(NOW(), '%Y-03-31') + 1, DATE_FORMAT(NOW(), '%Y-03-31')) - DATE_FORMAT(cont.birth_date, '%Y-%m-%d') - (DATE_FORMAT(NOW(), '00-%m-%d') < DATE_FORMAT(cont.birth_date, '00-%m-%d'))
+    SET cadets.{$getAgeCutOffField['column_name']} = IF(DATE_FORMAT(NOW(), '05-31') < DATE_FORMAT(NOW(), '%m-%d'), DATE_FORMAT(NOW(), '%Y-05-31') + 1, DATE_FORMAT(NOW(), '%Y-05-31')) - DATE_FORMAT(cont.birth_date, '%Y-%m-%d') - (DATE_FORMAT(NOW(), '00-05-31') < DATE_FORMAT(cont.birth_date, '00-%m-%d'))
     WHERE cont.birth_date IS NOT NULL";
 
   // Run query
