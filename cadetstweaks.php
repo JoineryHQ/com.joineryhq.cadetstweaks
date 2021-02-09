@@ -91,6 +91,17 @@ function cadetstweaks_civicrm_uninstall() {
 }
 
 /**
+ * Implements hook_civicrm_post().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_post
+ */
+function cadetstweaks_civicrm_post($op, $objectName, $objectId, &$objectRef) {
+  if ($objectName == 'Individual' && ($op == 'edit' || $op == 'create')) {
+    CRM_Cadetstweaks_Utils::runUpdateCutoffAges($objectId);
+  }
+}
+
+/**
  * Implements hook_civicrm_enable().
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_enable
