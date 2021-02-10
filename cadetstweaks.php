@@ -45,7 +45,7 @@ function cadetstweaks_civicrm_install() {
   $createAgeCutOffField = \Civi\Api4\CustomField::create()
     ->addValue('custom_group_id', $createCadetsExtra['id'])
     ->addValue('label', 'Age at cut-off')
-    ->addValue('data_type', 'Int')
+    ->addValue('data_type', 'String')
     ->addValue('html_type', 'Text')
     ->addValue('is_view', TRUE)
     ->addValue('is_searchable', TRUE)

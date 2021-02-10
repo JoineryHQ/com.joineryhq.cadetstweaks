@@ -65,7 +65,7 @@ class CRM_Cadetstweaks_Utils {
     // Update cutoff age of every contact using the custom group value table and column
     $query = "UPDATE `{$getCadetsExtra['table_name']}` AS cadets
       INNER JOIN `CRM_Cadetstweaks_Utils_buildUpdatesTable` AS cont ON cadets.entity_id = cont.id
-      SET cadets.{$getAgeCutOffField['column_name']} = cont.age_at_cutoff";
+      SET cadets.{$getAgeCutOffField['column_name']} = IF(cont.age_at_cutoff > 18, 'NA', cont.age_at_cutoff)";
 
     // Execute query
     $result = CRM_Core_DAO::executeQuery($query);
