@@ -11,7 +11,23 @@ class CRM_Cadetstweaks_Utils {
     // Create temporary table to store contact id and age cutoff
     $query = "CREATE TEMPORARY TABLE `CRM_Cadetstweaks_Utils_buildUpdatesTable`
       (PRIMARY KEY id (id))
-      SELECT id, concat(id, '', birth_date) AS age_at_cutoff
+      SELECT id,
+        -- start with the BASE YEAR
+        IF(
+          -- If cutoff date is not yet passed in this year:
+          '05-31' < DATE_FORMAT(NOW(), '%m-%d'),
+          -- then BASE YEAR is next year,
+          YEAR(NOW()) + 1,
+          -- otherwise then BASE YEAR is this year,
+          YEAR(NOW())
+        )
+        -- subtract the year of birth:
+        - YEAR(birth_date)
+        -- subtract 1 if cutoff date is before birthday: otherwise subtract 0.
+        - (
+        -- this boolean expression will evaluate to 1 or 0
+          '05-31' < DATE_FORMAT(birth_date, '%m-%d')
+        ) AS age_at_cutoff
       FROM `civicrm_contact`
       WHERE birth_date IS NOT NULL";
 
