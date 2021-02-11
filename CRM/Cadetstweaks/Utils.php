@@ -35,7 +35,7 @@ class CRM_Cadetstweaks_Utils {
     $queryParams = [];
     if ($cid) {
       $query .= " AND id = %1";
-      $queryParams[1] = ['Int', $cid];
+      $queryParams[1] = [$cid, 'Int'];
     }
 
     // Execute query
@@ -62,20 +62,15 @@ class CRM_Cadetstweaks_Utils {
 
     self::buildUpdatesTable($cid);
 
-    // Update cutoff age of every contact using the custom group value table and column
-    $query = "UPDATE `{$getCadetsExtra['table_name']}` AS cadets
-      INNER JOIN `CRM_Cadetstweaks_Utils_buildUpdatesTable` AS cont ON cadets.entity_id = cont.id
-      SET cadets.{$getAgeCutOffField['column_name']} = IF(cont.age_at_cutoff > 18, 'NA', cont.age_at_cutoff)";
+    // Insert/Update cutoff age of every contact using the custom group value table and column
+    $query = "INSERT INTO `{$getCadetsExtra['table_name']}` (entity_id, {$getAgeCutOffField['column_name']})
+      SELECT temp.id, temp.val
+      FROM (SELECT id, IF(age_at_cutoff > 18, 'N/A', age_at_cutoff) AS val FROM `CRM_Cadetstweaks_Utils_buildUpdatesTable`) temp
+      ON DUPLICATE KEY UPDATE
+      {$getAgeCutOffField['column_name']} = temp.val";
 
     // Execute query
     $result = CRM_Core_DAO::executeQuery($query);
-
-    // $buildsupdateQuery = "SELECT * FROM CRM_Cadetstweaks_Utils_buildUpdatesTable";
-    // $dao = CRM_Core_DAO::executeQuery($buildsupdateQuery);
-    // $buildsupdate = [];
-    // while ($dao->fetch()) {
-    //   $buildsupdate[] = $dao->toArray();
-    // }
 
     return $result;
   }
