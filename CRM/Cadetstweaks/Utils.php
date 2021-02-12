@@ -28,13 +28,12 @@ class CRM_Cadetstweaks_Utils {
         -- this boolean expression will evaluate to 1 or 0
           '05-31' < DATE_FORMAT(birth_date, '%m-%d')
         ) AS age_at_cutoff
-      FROM `civicrm_contact`
-      WHERE birth_date IS NOT NULL";
+      FROM `civicrm_contact`";
 
     // Add query params if $cid is not null
     $queryParams = [];
     if ($cid) {
-      $query .= " AND id = %1";
+      $query .= " WHERE id = %1";
       $queryParams[1] = [$cid, 'Int'];
     }
 
