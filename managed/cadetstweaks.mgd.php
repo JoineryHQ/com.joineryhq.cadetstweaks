@@ -11,7 +11,7 @@ return array(
     'entity' => 'Job',
     'params' => array(
       'version' => 3,
-      'run_frequency' => 'Always',
+      'run_frequency' => 'Daily',
       'name' => 'Update Cut-off Age in Every Contact',
       'api_entity' => 'Cadetstweaks',
       'api_action' => 'updatecutoffages',
