@@ -27,18 +27,11 @@ function civicrm_api3_cadetstweaks_Updatecutoffages($params) {
   $result = CRM_Cadetstweaks_Utils::runUpdateCutoffAges();
   // Debugging purposes
   if (!$result) {
-    $returnValues = [
-      [
-        'success' => FALSE,
-        'result' => $result,
-      ],
-    ];
-    // throw new API_Exception(/*error_message*/ 'Everyone knows that the magicword is "sesame"', /*error_code*/ 'magicword_incorrect');
+    throw new API_Exception('Unknown error occured after executing the query!', 'unknown_error');
   } else {
     $returnValues = [
       [
-        'success' => TRUE,
-        'result' => $result,
+        'modified' => $result->N,
       ],
     ];
   }
