@@ -20,7 +20,7 @@
   <compatibility>
     <ver>5.0</ver>
   </compatibility>
-  <comments>Developed by Joiner for The Cadets</comments>
+  <comments>Developed by Joinery for The Cadets</comments>
   <classloader>
     <psr4 prefix="Civi\" path="Civi"/>
   </classloader>
