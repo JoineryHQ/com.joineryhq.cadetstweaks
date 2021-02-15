@@ -49,7 +49,7 @@ class CRM_Cadetstweaks_Utils {
   public static function runUpdateCutoffAges($cid = NULL) {
     // Get the custom field to get the custom group value column
     $getAgeCutOffField = \Civi\Api4\CustomField::get()
-      ->addWhere('label', '=', 'Age at cut-off')
+      ->addWhere('name', '=', 'Age_at_cut_off')
       ->execute()
       ->first();
 
