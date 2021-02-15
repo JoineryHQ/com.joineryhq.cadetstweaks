@@ -1,42 +1,17 @@
-# Cadets Tweaks
+# CiviCRM: Cadets Tweaks
 
-![Screenshot](/images/screenshot.png)
+Custom CiviCRM features for The Cadets:
 
-(*FIXME: In one or two paragraphs, describe what the extension does and why one would download it. *)
-
-The extension is licensed under [GPL-3.0](LICENSE.txt).
+* "Age at cutoff" custom field: calculates contact's age at nearest future May 31 (or "Aged out" if that age is greater than 22).
 
 ## Requirements
 
 * PHP v7.0+
-* CiviCRM (*FIXME: Version number*)
+* CiviCRM 5.0
 
-## Installation (Web UI)
-
-This extension has not yet been published for installation via the web UI.
-
-## Installation (CLI, Zip)
-
-Sysadmins and developers may download the `.zip` file for this extension and
-install it with the command-line tool [cv](https://github.com/civicrm/cv).
-
-```bash
-cd <extension-dir>
-cv dl com.joineryhq.cadetstweaks@https://github.com/JoineryHQ/com.joineryhq.cadetstweaks/archive/master.zip
-```
-
-## Installation (CLI, Git)
-
-Sysadmins and developers may clone the [Git](https://en.wikipedia.org/wiki/Git) repo for this extension and
-install it with the command-line tool [cv](https://github.com/civicrm/cv).
-
-```bash
-git clone https://github.com/JoineryHQ/com.joineryhq.cadetstweaks.git
-cv en cadetstweaks
-```
 
 ## Support
-![screenshot](/images/joinery-logo.png)
+![Joinery](/images/joinery-logo.png)
 
 Joinery provides services for CiviCRM including custom extension development, training, data migrations, and more. We aim to keep this extension in good working order, and will do our best to respond appropriately to issues reported on its [github issue queue](https://github.com/JoineryHQ/com.joineryhq.cadetstweaks/issues). In addition, if you require urgent or highly customized improvements to this extension, we may suggest conducting a fee-based project under our standard commercial terms.  In any case, the place to start is the [github issue queue](https://github.com/JoineryHQ/com.joineryhq.cadetstweaks/issues) -- let us hear what you need and we'll be glad to help however we can.
 
