@@ -29,11 +29,7 @@ function civicrm_api3_cadetstweaks_Updatecutoffages($params) {
   if (!$result) {
     throw new API_Exception('Unknown error occured after executing the query!', 'unknown_error');
   } else {
-    $returnValues = [
-      [
-        'modified' => $result->N,
-      ],
-    ];
+    $returnValues['success'] = TRUE;
   }
 
   return civicrm_api3_create_success($returnValues, $params, 'Cadetstweaks', 'Updatecutoffages');
