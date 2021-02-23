@@ -50,12 +50,14 @@ class CRM_Cadetstweaks_Utils {
     // Get the custom field to get the custom group value column
     $getAgeCutOffField = \Civi\Api4\CustomField::get()
       ->addWhere('name', '=', 'Age_at_cut_off')
+      ->setCheckPermissions(FALSE)
       ->execute()
       ->first();
 
     // Get the custom group to get the custom group value table
     $getCadetsExtra = \Civi\Api4\CustomGroup::get()
       ->addWhere('title', '=', 'Cadets Extra')
+      ->setCheckPermissions(FALSE)
       ->execute()
       ->first();
 
