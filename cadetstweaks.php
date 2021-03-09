@@ -103,6 +103,31 @@ function cadetstweaks_civicrm_post($op, $objectName, $objectId, &$objectRef) {
 }
 
 /**
+ * Implements hook_civicrm_buildForm().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_buildForm
+ */
+function cadetstweaks_civicrm_buildForm($formName, $form) {
+  if ($formName == 'CRM_Admin_Form_RelationshipType') {
+    // Create new fields.
+    $form->addElement('checkbox', 'cadetstweaks_hide_in_dashboard', E::ts('Hide Relationships Type in User Dashboard?'));
+
+    // Assign bhfe fields to the template, so our new field has a place to live.
+    $tpl = CRM_Core_Smarty::singleton();
+    $bhfe = $tpl->get_template_vars('beginHookFormElements');
+    if (!$bhfe) {
+      $bhfe = array();
+    }
+
+    $bhfe[] = 'cadetstweaks_hide_in_dashboard';
+    $form->assign('beginHookFormElements', $bhfe);
+
+    // Add javascript that will relocate our field to a sensible place in the form.
+    CRM_Core_Resources::singleton()->addScriptFile('com.joineryhq.cadetstweaks', 'js/CRM_Admin_Form_RelationshipType.js');
+  }
+}
+
+/**
  * Implements hook_civicrm_enable().
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_enable
