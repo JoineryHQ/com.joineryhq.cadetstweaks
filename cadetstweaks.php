@@ -52,6 +52,16 @@ function cadetstweaks_civicrm_install() {
     ->addValue('is_searchable', TRUE)
     ->execute()
     ->first();
+
+  // Create option group for hiding relationship type in user dashboard
+  $createCadetstweakOptionGroup = \Civi\Api4\OptionGroup::create()
+      ->setCheckPermissions(FALSE)
+      ->addValue('name', 'cadetstweaks')
+      ->addValue('title', 'Cadetstweak Extension Options')
+      ->addValue('is_active', TRUE)
+      ->addValue('is_locked', TRUE)
+      ->addValue('is_reserved', TRUE)
+      ->execute();
 }
 
 /**
@@ -89,6 +99,11 @@ function cadetstweaks_civicrm_uninstall() {
 
   // Remove custom value related to the custom group
   CRM_Core_DAO::executeQuery("DROP TABLE IF EXISTS {$getCadetsExtra['table_name']}");
+
+  // Delete option group
+  $deleteCadetstweakOptionGroup = \Civi\Api4\OptionGroup::delete()
+    ->addWhere('name', '=','cadetstweaks')
+    ->execute();
 }
 
 /**
@@ -99,6 +114,15 @@ function cadetstweaks_civicrm_uninstall() {
 function cadetstweaks_civicrm_post($op, $objectName, $objectId, &$objectRef) {
   if ($objectName == 'Individual' && ($op == 'edit' || $op == 'create')) {
     CRM_Cadetstweaks_Utils::runUpdateCutoffAges($objectId);
+  }
+
+  // Delete optionvalue of related to RelationshipType if its deleted
+  // It is not working since there is no post hook when RelationshipType is deleted
+  if ($objectName == 'RelationshipType' && $op == 'delete') {
+    $deleteOptionValue = \Civi\Api4\OptionValue::delete()
+      ->addWhere('option_group_id:name', '=', 'cadetstweaks')
+      ->addWhere('label', '=', "relationship_type_{$objectId}")
+      ->execute();
   }
 }
 
@@ -124,6 +148,74 @@ function cadetstweaks_civicrm_buildForm($formName, $form) {
 
     // Add javascript that will relocate our field to a sensible place in the form.
     CRM_Core_Resources::singleton()->addScriptFile('com.joineryhq.cadetstweaks', 'js/CRM_Admin_Form_RelationshipType.js');
+
+    // Set defaults so our field has the right value.
+    $rid = $form->getVar('_id');
+    if ($rid) {
+      $settings = CRM_Cadetstweaks_Utils::getSettings($rid);
+      $defaults = array(
+        'cadetstweaks_hide_in_dashboard' => $settings['cadetstweaks_hide_in_dashboard'],
+      );
+      $form->setDefaults($defaults);
+    }
+  }
+}
+
+/**
+ * Implements hook_civicrm_postProcess().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_postProcess
+ */
+function cadetstweaks_civicrm_postProcess($formName, &$form) {
+  if ($formName == 'CRM_Admin_Form_RelationshipType') {
+    // Get relationship type id if form is edit
+    $rid = $form->getVar('_id');
+
+    // Get relationship type id base on the label_a_b submit values...
+    // if $rid is empty (newly created relationship type)
+    if (empty($rid)) {
+      $relType = \Civi\Api4\RelationshipType::get()
+        ->addSelect('id')
+        ->addWhere('label_a_b', '=', $form->_submitValues['label_a_b'])
+        ->execute()
+        ->first();
+
+      $rid = $relType['id'];
+    }
+
+    // Save the value of the cadetstweaks_hide_in_dashboard in the settings
+    $settings = CRM_Cadetstweaks_Utils::getSettings($rid);
+    $settings['cadetstweaks_hide_in_dashboard'] = $form->_submitValues['cadetstweaks_hide_in_dashboard'];
+    CRM_Cadetstweaks_Utils::saveAllSettings($rid, $settings);
+  }
+}
+
+/**
+ * Implements hook_civicrm_searchColumns().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_searchColumns
+ */
+function cadetstweaks_civicrm_searchColumns($objectName, &$headers, &$rows, &$selector) {
+  // Hide relationship types in user dashboard
+  if (
+    $objectName == 'relationship.rows'
+    && CRM_Utils_Request::retrieve('context', 'Alphanumeric') == 'user'
+  ) {
+    foreach ($rows as $key => $row) {
+      // Get the list of relationship type that's need to be hidden
+      $hiddenRelationshipTypes = CRM_Cadetstweaks_Utils::hiddenRelationshipTypes();
+
+      // Get relationship type of the row
+      $relationType = CRM_Cadetstweaks_Utils::getRelationshipType($row['relation']);
+
+      // Unset relationship type if it's one that needs to be hidden
+      if (in_array($relationType['id'], $hiddenRelationshipTypes)) {
+        unset($rows[$key]);
+      }
+    }
+
+    // Reset index of $rows to prevent empty data
+    $rows = array_values($rows);
   }
 }
 
