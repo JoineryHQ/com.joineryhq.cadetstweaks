@@ -100,6 +100,11 @@ function cadetstweaks_civicrm_uninstall() {
   // Remove custom value related to the custom group
   CRM_Core_DAO::executeQuery("DROP TABLE IF EXISTS {$getCadetsExtra['table_name']}");
 
+  // Delete option value
+  $deleteCadetstweakOptionValue = \Civi\Api4\OptionValue::delete()
+    ->addWhere('option_group_id:name', '=','cadetstweaks')
+    ->execute();
+
   // Delete option group
   $deleteCadetstweakOptionGroup = \Civi\Api4\OptionGroup::delete()
     ->addWhere('name', '=','cadetstweaks')
