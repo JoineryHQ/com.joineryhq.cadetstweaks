@@ -30,38 +30,6 @@ function cadetstweaks_civicrm_xmlMenu(&$files) {
  */
 function cadetstweaks_civicrm_install() {
   _cadetstweaks_civix_civicrm_install();
-
-  // Add custom group when installed
-  $createCadetsExtra = \Civi\Api4\CustomGroup::create()
-    ->addValue('title', 'Cadets Extra')
-    ->addValue('extends', 'Individual')
-    ->addValue('style', 'Inline')
-    ->addValue('is_active', TRUE)
-    ->addValue('collapse_display', FALSE)
-    ->execute()
-    ->first();
-
-  // Add custom field when installed and relate it to the custom group
-  $createAgeCutOffField = \Civi\Api4\CustomField::create()
-    ->addValue('custom_group_id', $createCadetsExtra['id'])
-    ->addValue('name', 'Age_at_cut_off')
-    ->addValue('label', 'Age at cut-off')
-    ->addValue('data_type', 'String')
-    ->addValue('html_type', 'Text')
-    ->addValue('is_view', TRUE)
-    ->addValue('is_searchable', TRUE)
-    ->execute()
-    ->first();
-
-  // Create option group for hiding relationship type in user dashboard
-  $createCadetstweakOptionGroup = \Civi\Api4\OptionGroup::create()
-      ->setCheckPermissions(FALSE)
-      ->addValue('name', 'cadetstweaks')
-      ->addValue('title', 'Cadetstweak Extension Options')
-      ->addValue('is_active', TRUE)
-      ->addValue('is_locked', TRUE)
-      ->addValue('is_reserved', TRUE)
-      ->execute();
 }
 
 /**
@@ -80,35 +48,6 @@ function cadetstweaks_civicrm_postInstall() {
  */
 function cadetstweaks_civicrm_uninstall() {
   _cadetstweaks_civix_civicrm_uninstall();
-
-  // Get custom group
-  $getCadetsExtra = \Civi\Api4\CustomGroup::get()
-    ->addWhere('title', '=', 'Cadets Extra')
-    ->execute()
-    ->first();
-
-  // Remove custom field related to custom group
-  $deleteCadetsExtraFields = \Civi\Api4\CustomField::delete()
-    ->addWhere('custom_group_id', '=', $getCadetsExtra['id'])
-    ->execute();
-
-  // Remove custom group
-  $deleteCadetsExtra = \Civi\Api4\CustomGroup::delete()
-    ->addWhere('title', '=', 'Cadets Extra')
-    ->execute();
-
-  // Remove custom value related to the custom group
-  CRM_Core_DAO::executeQuery("DROP TABLE IF EXISTS {$getCadetsExtra['table_name']}");
-
-  // Delete option value
-  $deleteCadetstweakOptionValue = \Civi\Api4\OptionValue::delete()
-    ->addWhere('option_group_id:name', '=','cadetstweaks')
-    ->execute();
-
-  // Delete option group
-  $deleteCadetstweakOptionGroup = \Civi\Api4\OptionGroup::delete()
-    ->addWhere('name', '=','cadetstweaks')
-    ->execute();
 }
 
 /**
@@ -125,7 +64,7 @@ function cadetstweaks_civicrm_post($op, $objectName, $objectId, &$objectRef) {
   // It is not working since there is no post hook when RelationshipType is deleted
   if ($objectName == 'RelationshipType' && $op == 'delete') {
     $deleteOptionValue = \Civi\Api4\OptionValue::delete()
-      ->addWhere('option_group_id:name', '=', 'cadetstweaks')
+      ->addWhere('option_group_id:name', '=', 'cadetstweaks_relationship_type')
       ->addWhere('label', '=', "relationship_type_{$objectId}")
       ->execute();
   }
@@ -157,7 +96,7 @@ function cadetstweaks_civicrm_buildForm($formName, $form) {
     // Set defaults so our field has the right value.
     $rid = $form->getVar('_id');
     if ($rid) {
-      $settings = CRM_Cadetstweaks_Utils::getSettings($rid);
+      $settings = CRM_Cadetstweaks_Relationshiptype_Utils::getRelationshipTypeSettingsValue($rid);
       $defaults = array(
         'cadetstweaks_hide_in_dashboard' => $settings['cadetstweaks_hide_in_dashboard'],
       );
@@ -189,9 +128,9 @@ function cadetstweaks_civicrm_postProcess($formName, &$form) {
     }
 
     // Save the value of the cadetstweaks_hide_in_dashboard in the settings
-    $settings = CRM_Cadetstweaks_Utils::getSettings($rid);
+    $settings = CRM_Cadetstweaks_Relationshiptype_Utils::getRelationshipTypeSettingsValue($rid);
     $settings['cadetstweaks_hide_in_dashboard'] = $form->_submitValues['cadetstweaks_hide_in_dashboard'];
-    CRM_Cadetstweaks_Utils::saveAllSettings($rid, $settings);
+    CRM_Cadetstweaks_Relationshiptype_Utils::saveRelationshipTypeSettingsValue($rid, $settings);
   }
 }
 
@@ -208,10 +147,10 @@ function cadetstweaks_civicrm_searchColumns($objectName, &$headers, &$rows, &$se
   ) {
     foreach ($rows as $key => $row) {
       // Get the list of relationship type that's need to be hidden
-      $hiddenRelationshipTypes = CRM_Cadetstweaks_Utils::hiddenRelationshipTypes();
+      $hiddenRelationshipTypes = CRM_Cadetstweaks_Relationshiptype_Utils::hiddenRelationshipTypes();
 
       // Get relationship type of the row
-      $relationType = CRM_Cadetstweaks_Utils::getRelationshipType($row['relation']);
+      $relationType = CRM_Cadetstweaks_Relationshiptype_Utils::getRelationshipType($row['relation']);
 
       // Unset relationship type if it's one that needs to be hidden
       if (in_array($relationType['id'], $hiddenRelationshipTypes)) {
