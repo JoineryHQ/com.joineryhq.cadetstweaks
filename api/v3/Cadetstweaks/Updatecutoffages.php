@@ -28,7 +28,8 @@ function civicrm_api3_cadetstweaks_Updatecutoffages($params) {
   // Debugging purposes
   if (!$result) {
     throw new API_Exception('Unknown error occured after executing the query!', 'unknown_error');
-  } else {
+  }
+  else {
     $returnValues['success'] = TRUE;
   }
 
