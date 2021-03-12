@@ -64,28 +64,15 @@ class CRM_Cadetstweaks_Relationshiptype_Utils {
    *
    * @return array RelationType
    */
-  public static function getRelationshipType($relation) {
-    // Get the label of the relationship type by removing html tags
-    $label = strip_tags($relation);
-    preg_match_all('/<a[^>]+href=([\'"])(?<href>.+?)\1[^>]*>/i', $relation, $result);
-
-    // Loop href since there are multiple link in $relation
-    foreach ($result['href'] as $href) {
-      $urlParam = parse_url($href, PHP_URL_QUERY);
-      parse_str($urlParam, $relQuery);
-      // if amp;rtype exist, add it on the extractedData
-      if ($relQuery['amp;rtype']) {
-        $relType = $relQuery['amp;rtype'];
-      }
-    }
-
-    // Get api base on extracted data in the $relation
-    $relationshipType = \Civi\Api4\RelationshipType::get()
-      ->addWhere("label_{$relType}", '=', $label)
+  public static function getRelationshipType($relationshipId) {
+    // Get Relationship Type ID base on RelationshipId
+    $relationships = \Civi\Api4\Relationship::get()
+      ->setCheckPermissions(FALSE)
+      ->addWhere('id', '=', $relationshipId)
       ->execute()
       ->first();
 
-    return $relationshipType;
+    return $relationships['relationship_type_id'];
   }
 
   /**
@@ -99,6 +86,7 @@ class CRM_Cadetstweaks_Relationshiptype_Utils {
 
     // Get all option value of cadetstweaks option group
     $optionValues = \Civi\Api4\OptionValue::get()
+      ->setCheckPermissions(FALSE)
       ->addSelect('value')
       ->addWhere('option_group_id:name', '=', 'cadetstweaks_relationship_type')
       ->execute();

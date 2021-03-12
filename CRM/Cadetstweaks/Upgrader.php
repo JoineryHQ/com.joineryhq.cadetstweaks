@@ -36,6 +36,14 @@ class CRM_Cadetstweaks_Upgrader extends CRM_Cadetstweaks_Upgrader_Base {
         ->addValue('is_searchable', TRUE)
         ->execute()
         ->first();
+
+      $createCadetstweakOptionGroup = \Civi\Api4\OptionGroup::create()
+        ->addValue('name', 'cadetstweaks_relationship_type')
+        ->addValue('title', 'Cadetstweak Extension Options')
+        ->addValue('is_active', TRUE)
+        ->addValue('is_locked', TRUE)
+        ->addValue('is_reserved', TRUE)
+        ->execute();
     } catch (API_Exception $e) {
     }
   }
@@ -107,7 +115,6 @@ class CRM_Cadetstweaks_Upgrader extends CRM_Cadetstweaks_Upgrader_Base {
 
     try {
       $createCadetstweakOptionGroup = \Civi\Api4\OptionGroup::create()
-        ->setCheckPermissions(FALSE)
         ->addValue('name', 'cadetstweaks_relationship_type')
         ->addValue('title', 'Cadetstweak Extension Options')
         ->addValue('is_active', TRUE)

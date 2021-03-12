@@ -59,15 +59,6 @@ function cadetstweaks_civicrm_post($op, $objectName, $objectId, &$objectRef) {
   if ($objectName == 'Individual' && ($op == 'edit' || $op == 'create')) {
     CRM_Cadetstweaks_Utils::runUpdateCutoffAges($objectId);
   }
-
-  // Delete optionvalue of related to RelationshipType if its deleted
-  // It is not working since there is no post hook when RelationshipType is deleted
-  if ($objectName == 'RelationshipType' && $op == 'delete') {
-    $deleteOptionValue = \Civi\Api4\OptionValue::delete()
-      ->addWhere('option_group_id:name', '=', 'cadetstweaks_relationship_type')
-      ->addWhere('label', '=', "relationship_type_{$objectId}")
-      ->execute();
-  }
 }
 
 /**
@@ -150,10 +141,10 @@ function cadetstweaks_civicrm_searchColumns($objectName, &$headers, &$rows, &$se
       $hiddenRelationshipTypes = CRM_Cadetstweaks_Relationshiptype_Utils::hiddenRelationshipTypes();
 
       // Get relationship type of the row
-      $relationType = CRM_Cadetstweaks_Relationshiptype_Utils::getRelationshipType($row['relation']);
+      $relationTypeId = CRM_Cadetstweaks_Relationshiptype_Utils::getRelationshipType($row['DT_RowId']);
 
       // Unset relationship type if it's one that needs to be hidden
-      if (in_array($relationType['id'], $hiddenRelationshipTypes)) {
+      if (in_array($relationTypeId, $hiddenRelationshipTypes)) {
         unset($rows[$key]);
       }
     }
