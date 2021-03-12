@@ -3,6 +3,7 @@
 Custom CiviCRM features for The Cadets:
 
 * "Age at cutoff" custom field: calculates contact's age at nearest future May 31 (or "Aged out" if that age is greater than 22).
+* Allow hiding relationships per relationship-type on the CiviCRM user dashboard.
 
 ## Requirements
 
