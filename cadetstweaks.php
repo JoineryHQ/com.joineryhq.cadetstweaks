@@ -141,10 +141,10 @@ function cadetstweaks_civicrm_searchColumns($objectName, &$headers, &$rows, &$se
       $hiddenRelationshipTypes = CRM_Cadetstweaks_Relationshiptype_Utils::hiddenRelationshipTypes();
 
       // Get relationship type of the row
-      $relationTypeId = CRM_Cadetstweaks_Relationshiptype_Utils::getRelationshipType($row['DT_RowId']);
+      $relationshipTypeId = CRM_Cadetstweaks_Relationshiptype_Utils::getRelationshipType($row['DT_RowId']);
 
       // Unset relationship type if it's one that needs to be hidden
-      if (in_array($relationTypeId, $hiddenRelationshipTypes)) {
+      if (in_array($relationshipTypeId, $hiddenRelationshipTypes)) {
         unset($rows[$key]);
       }
     }

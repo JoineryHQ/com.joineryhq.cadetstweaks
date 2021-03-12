@@ -12,6 +12,7 @@ class CRM_Cadetstweaks_Relationshiptype_Utils {
   public static function getRelationshipTypeSettingsValue($id) {
     $settingName = "relationship_type_{$id}";
     $result = \Civi\Api4\OptionValue::get()
+      ->setCheckPermissions(FALSE)
       ->addWhere('option_group_id:name', '=', 'cadetstweaks_relationship_type')
       ->addWhere('name', '=', $settingName)
       ->execute();
@@ -32,6 +33,7 @@ class CRM_Cadetstweaks_Relationshiptype_Utils {
   public static function saveRelationshipTypeSettingsValue($id, $settings) {
     $settingName = "relationship_type_{$id}";
     $result = \Civi\Api4\OptionValue::get()
+      ->setCheckPermissions(FALSE)
       ->addWhere('option_group_id:name', '=', 'cadetstweaks_relationship_type')
       ->addWhere('name', '=', $settingName)
       ->execute()
@@ -62,7 +64,7 @@ class CRM_Cadetstweaks_Relationshiptype_Utils {
    *
    * @param string $relation in datatables data (civicrm/ajax/contactrelationships?context=user&cid=CONTACTID) in user dashboard
    *
-   * @return array RelationType
+   * @return int RelationshipTypeId
    */
   public static function getRelationshipType($relationshipId) {
     // Get Relationship Type ID base on RelationshipId

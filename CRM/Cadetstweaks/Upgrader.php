@@ -37,6 +37,7 @@ class CRM_Cadetstweaks_Upgrader extends CRM_Cadetstweaks_Upgrader_Base {
         ->execute()
         ->first();
 
+      // Create option group for hiding relationship type in user dashboard
       $createCadetstweakOptionGroup = \Civi\Api4\OptionGroup::create()
         ->addValue('name', 'cadetstweaks_relationship_type')
         ->addValue('title', 'Cadetstweak Extension Options')
