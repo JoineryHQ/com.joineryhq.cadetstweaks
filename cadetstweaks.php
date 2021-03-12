@@ -110,6 +110,7 @@ function cadetstweaks_civicrm_postProcess($formName, &$form) {
     // if $rid is empty (newly created relationship type)
     if (empty($rid)) {
       $relType = \Civi\Api4\RelationshipType::get()
+        ->setCheckPermissions(FALSE)
         ->addSelect('id')
         ->addWhere('label_a_b', '=', $form->_submitValues['label_a_b'])
         ->execute()

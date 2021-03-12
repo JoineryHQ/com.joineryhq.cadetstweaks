@@ -17,6 +17,7 @@ class CRM_Cadetstweaks_Upgrader extends CRM_Cadetstweaks_Upgrader_Base {
     try {
       // Add custom group when installed
       $createCadetsExtra = \Civi\Api4\CustomGroup::create()
+        ->setCheckPermissions(FALSE)
         ->addValue('title', 'Cadets Extra')
         ->addValue('extends', 'Individual')
         ->addValue('style', 'Inline')
@@ -27,6 +28,7 @@ class CRM_Cadetstweaks_Upgrader extends CRM_Cadetstweaks_Upgrader_Base {
 
       // Add custom field when installed and relate it to the custom group
       $createAgeCutOffField = \Civi\Api4\CustomField::create()
+        ->setCheckPermissions(FALSE)
         ->addValue('custom_group_id', $createCadetsExtra['id'])
         ->addValue('name', 'Age_at_cut_off')
         ->addValue('label', 'Age at cut-off')
@@ -39,6 +41,7 @@ class CRM_Cadetstweaks_Upgrader extends CRM_Cadetstweaks_Upgrader_Base {
 
       // Create option group for hiding relationship type in user dashboard
       $createCadetstweakOptionGroup = \Civi\Api4\OptionGroup::create()
+        ->setCheckPermissions(FALSE)
         ->addValue('name', 'cadetstweaks_relationship_type')
         ->addValue('title', 'Cadetstweak Extension Options')
         ->addValue('is_active', TRUE)
@@ -75,17 +78,20 @@ class CRM_Cadetstweaks_Upgrader extends CRM_Cadetstweaks_Upgrader_Base {
     try {
       // Get custom group
       $getCadetsExtra = \Civi\Api4\CustomGroup::get()
+        ->setCheckPermissions(FALSE)
         ->addWhere('title', '=', 'Cadets Extra')
         ->execute()
         ->first();
 
       // Remove custom field related to custom group
       $deleteCadetsExtraFields = \Civi\Api4\CustomField::delete()
+        ->setCheckPermissions(FALSE)
         ->addWhere('custom_group_id', '=', $getCadetsExtra['id'])
         ->execute();
 
       // Remove custom group
       $deleteCadetsExtra = \Civi\Api4\CustomGroup::delete()
+        ->setCheckPermissions(FALSE)
         ->addWhere('title', '=', 'Cadets Extra')
         ->execute();
 
@@ -94,11 +100,13 @@ class CRM_Cadetstweaks_Upgrader extends CRM_Cadetstweaks_Upgrader_Base {
 
       // Delete option value
       $deleteCadetstweakOptionValue = \Civi\Api4\OptionValue::delete()
+        ->setCheckPermissions(FALSE)
         ->addWhere('option_group_id:name', '=','cadetstweaks_relationship_type')
         ->execute();
 
       // Delete option group
       $deleteCadetstweakOptionGroup = \Civi\Api4\OptionGroup::delete()
+        ->setCheckPermissions(FALSE)
         ->addWhere('name', '=','cadetstweaks_relationship_type')
         ->execute();
     } catch (API_Exception $e) {
@@ -116,6 +124,7 @@ class CRM_Cadetstweaks_Upgrader extends CRM_Cadetstweaks_Upgrader_Base {
 
     try {
       $createCadetstweakOptionGroup = \Civi\Api4\OptionGroup::create()
+        ->setCheckPermissions(FALSE)
         ->addValue('name', 'cadetstweaks_relationship_type')
         ->addValue('title', 'Cadetstweak Extension Options')
         ->addValue('is_active', TRUE)
