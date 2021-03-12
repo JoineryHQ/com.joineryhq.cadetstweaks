@@ -60,13 +60,13 @@ class CRM_Cadetstweaks_Relationshiptype_Utils {
   }
 
   /**
-   * Get the data of relationship type in user dashboard
+   * Get the data of relationship type id
    *
-   * @param string $relation in datatables data (civicrm/ajax/contactrelationships?context=user&cid=CONTACTID) in user dashboard
+   * @param int RelationshipId in users dashboard relationship table row
    *
    * @return int RelationshipTypeId
    */
-  public static function getRelationshipType($relationshipId) {
+  public static function getRelationshipTypeId($relationshipId) {
     // Get Relationship Type ID base on RelationshipId
     $relationships = \Civi\Api4\Relationship::get()
       ->setCheckPermissions(FALSE)
@@ -78,15 +78,15 @@ class CRM_Cadetstweaks_Relationshiptype_Utils {
   }
 
   /**
-   * Get all the data of relationship type that's need to be hidden
+   * Get all id of relationship type that's need to be hidden
    *
    * @return array of relationship type id
    */
-  public static function hiddenRelationshipTypes() {
+  public static function hiddenRelationshipTypeIds() {
     // Initialize variable array
-    $hiddenRelationshipTypes = [];
+    $hiddenRelationshipTypeIds = [];
 
-    // Get all option value of cadetstweaks option group
+    // Get all option value of cadetstweaks_relationship_type option group
     $optionValues = \Civi\Api4\OptionValue::get()
       ->setCheckPermissions(FALSE)
       ->addSelect('value')
@@ -94,13 +94,13 @@ class CRM_Cadetstweaks_Relationshiptype_Utils {
       ->execute();
     foreach ($optionValues as $optionValue) {
       $value = json_decode($optionValue['value']);
-      // if cadetstweaks_hide_in_dashboard is 1, assign it to the $hiddenRelationshipTypes
+      // if cadetstweaks_hide_in_dashboard is 1, assign it to the $hiddenRelationshipTypeIds
       if ($value->cadetstweaks_hide_in_dashboard) {
-        $hiddenRelationshipTypes[] = $value->relationship_type_id;
+        $hiddenRelationshipTypeIds[] = $value->relationship_type_id;
       }
     }
 
-    return $hiddenRelationshipTypes;
+    return $hiddenRelationshipTypeIds;
   }
 
 }
