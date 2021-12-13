@@ -6,6 +6,22 @@ use CRM_Cadetstweaks_ExtensionUtil as E;
 // phpcs:enable
 
 /**
+ * Implements hook_civicrm_apiWrappers().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_apiWrappers/
+ */
+function cadetstweaks_civicrm_apiWrappers(&$wrappers, $apiRequest) {
+  if (
+    strtolower($apiRequest['entity']) == 'contribution'
+    && strtolower($apiRequest['action']) == 'get'
+    // Note that we only support api3 here. Api4 support may be added later.
+    && $apiRequest['version'] == 3
+  ) {
+    $wrappers[] = new CRM_Cadetstweaks_APIWrapperContributionGet3();
+  }
+}
+
+/**
  * Implements hook_civicrm_config().
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_config/
