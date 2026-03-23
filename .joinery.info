@@ -27,4 +27,5 @@ type=civicrm-extension
 # active
 # limited
 # as-is
-support-level=as-is
+# none
+support-level=none
